@@ -123,6 +123,7 @@ def main():
 
         frame_num = 0
         detect_list = []
+        headcount = set()
 
         print('\n===================================================\n')
         print('* Tracking Start.')
@@ -228,7 +229,6 @@ def main():
             tracker.predict()
             tracker.update(detections)
 
-            headcount = 0
             # update tracks
             for track in tracker.tracks:
                 if not track.is_confirmed() or track.time_since_update > 1:
@@ -250,7 +250,8 @@ def main():
                     print("Tracker ID: {}, Class: {},  BBox Coords (xmin, ymin, xmax, ymax): {}".format(
                         str(track.track_id), class_name, (int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3]))))
 
-                headcount = track.track_id
+                temp = track.track_id
+                headcount.add(temp)
 
             # calculate frames per second of running detections
             fps = 1.0 / (time.time() - start_time)
@@ -270,7 +271,7 @@ def main():
         if tf.compat.v1.executing_eagerly():
             tf.compat.v1.enable_eager_execution()
 
-    return str(headcount)
+    return str(len(headcount))
 
 
 if __name__ == '__main__':
